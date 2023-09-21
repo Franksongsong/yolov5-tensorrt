@@ -219,12 +219,30 @@ Result Builder::_buildEngine(const std::string& inputFilePath,
                         builder->createBuilderConfig());
         config->setMaxWorkspaceSize(1 << 20);
 
+        std::cout << "Your platform support int8: " << (builder->platformHasFastInt8() ? "true" : "false") << std::endl;
+        std::cout << "Your platform support FP16: " << (builder->platformHasFastFp16() ? "true" : "false") << std::endl;
+        std::cout << "Your platform support FP32: " << (builder->platformHasTf32() ? "true" : "false") << std::endl;
+
         if(precision == PRECISION_FP32)
         {
             /*  this is the default */
+            if(builder->platformHasTf32()){
+                std::cout << "Your Platform Selected FP32" << std::endl;
+            }else{
+                std::cout << "Your Platform Selected FP32, But Your HardWare Not Support" << std::endl;
+                return RESULT_FAILURE_INVALID_HARDWARE;
+            }
         }
         else if(precision == PRECISION_FP16)
         {
+            /*  FP16 Selected */
+            if(builder->platformHasFastFp16()){
+                std::cout << "Your Platform Selected FP16" << std::endl;
+            }else{
+                std::cout << "Your Platform Selected FP16, But Your HardWare Not Support" << std::endl;
+                return RESULT_FAILURE_INVALID_HARDWARE;
+            }
+
             if(!builder->platformHasFastFp16())
             {
                 _logger->log(LOGGING_ERROR, "[Builder] buildEngine() failure: "
@@ -232,6 +250,7 @@ Result Builder::_buildEngine(const std::string& inputFilePath,
                             "current platform");   
                 return RESULT_FAILURE_INVALID_INPUT;
             }
+            std::cout << "Your Platform Selected FP16" << std::endl;
             config->setFlag(nvinfer1::BuilderFlag::kFP16);
         }
     
