@@ -42,6 +42,10 @@ namespace yolov5
 
 enum Result
 {
+    /*      error in your hardware (i.e. a bug in your software).
+     */
+    RESULT_FAILURE_INVALID_HARDWARE               = -110,
+
     /*      Invalid input specified. This typically indicates a programming
             error in your software (i.e. a bug in your software).
      */
